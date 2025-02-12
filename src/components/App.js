@@ -5,6 +5,7 @@ import Loader from './Loader';
 import Error from './Error';
 import StartScreen from './StartScreen';
 import Question from './Question';
+import ProgressBar from './ProgressBar';
 
 const initialState = {
 	questions: [],
@@ -54,7 +55,15 @@ function reducer(state, action) {
 
 export default function App() {
 	const [
-		{ questions, status, index, options, answer, correctAnswerIndex },
+		{
+			questions,
+			status,
+			index,
+			options,
+			answer,
+			correctAnswerIndex,
+			points,
+		},
 		dispatch,
 	] = useReducer(reducer, initialState);
 
@@ -92,14 +101,21 @@ export default function App() {
 					/>
 				)}
 				{status === 'active' && (
-					<Question
-						question={questions[index]}
-						dispatch={dispatch}
-						options={options}
-						answer={answer}
-						correctAnswerIndex={correctAnswerIndex}
-						index={index}
-					/>
+					<>
+						<ProgressBar
+							index={index}
+							totalQuestions={totalQuestions}
+							points={points}
+						/>
+						<Question
+							question={questions[index]}
+							dispatch={dispatch}
+							options={options}
+							answer={answer}
+							correctAnswerIndex={correctAnswerIndex}
+							index={index}
+						/>
+					</>
 				)}
 			</Main>
 		</div>
