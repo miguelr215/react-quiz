@@ -6,6 +6,7 @@ import Error from './Error';
 import StartScreen from './StartScreen';
 import Question from './Question';
 import ProgressBar from './ProgressBar';
+import FinishScreen from './FinishScreen';
 
 const initialState = {
 	questions: [],
@@ -48,6 +49,14 @@ function reducer(state, action) {
 				correctAnswerIndex: null,
 				options: [],
 			};
+		case 'finish':
+			return { ...state, status: 'finish' };
+		case 'restart':
+			return {
+				...initialState,
+				questions: state.questions,
+				status: 'ready',
+			};
 		default:
 			throw new Error('Action unknown');
 	}
@@ -67,7 +76,7 @@ export default function App() {
 		dispatch,
 	] = useReducer(reducer, initialState);
 
-	const totalQuestions = questions.length;
+	const totalQuestions = questions?.length;
 
 	useEffect(function () {
 		async function getQuestions() {
@@ -114,8 +123,16 @@ export default function App() {
 							answer={answer}
 							correctAnswerIndex={correctAnswerIndex}
 							index={index}
+							totalQuestions={totalQuestions}
 						/>
 					</>
+				)}
+				{status === 'finish' && (
+					<FinishScreen
+						points={points}
+						totalQuestions={totalQuestions}
+						dispatch={dispatch}
+					/>
 				)}
 			</Main>
 		</div>

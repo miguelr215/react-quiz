@@ -8,6 +8,7 @@ function Question({
 	correctAnswerIndex,
 	index,
 	dispatch,
+	totalQuestions,
 }) {
 	const hasAnswered = answer !== null;
 
@@ -41,7 +42,7 @@ function Question({
 				answer={answer}
 				correctAnswerIndex={correctAnswerIndex}
 			/>
-			{hasAnswered && (
+			{hasAnswered && index < totalQuestions - 1 && (
 				<button
 					className="btn btn-ui"
 					onClick={() =>
@@ -49,6 +50,14 @@ function Question({
 					}
 				>
 					Next
+				</button>
+			)}
+			{hasAnswered && index === totalQuestions - 1 && (
+				<button
+					className="btn btn-ui"
+					onClick={() => dispatch({ type: 'finish' })}
+				>
+					Finish
 				</button>
 			)}
 		</div>
