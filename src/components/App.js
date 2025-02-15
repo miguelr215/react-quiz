@@ -1,4 +1,5 @@
 import { useEffect, useReducer } from 'react';
+
 import Header from './Header';
 import Main from './Main';
 import Loader from './Loader';
@@ -7,6 +8,10 @@ import StartScreen from './StartScreen';
 import Question from './Question';
 import ProgressBar from './ProgressBar';
 import FinishScreen from './FinishScreen';
+import Footer from './Footer';
+import Timer from './Timer';
+
+const SECS_PER_QUES = 30;
 
 const initialState = {
 	questions: [],
@@ -18,6 +23,7 @@ const initialState = {
 	correctAnswerIndex: null,
 	answer: null,
 	points: 0,
+	secondsRemaining: null,
 };
 
 function reducer(state, action) {
@@ -27,7 +33,11 @@ function reducer(state, action) {
 		case 'dataFailed':
 			return { ...state, status: 'error' };
 		case 'start':
-			return { ...state, status: 'active' };
+			return {
+				...state,
+				status: 'active',
+				secondsRemaining: state.questions.length * SECS_PER_QUES,
+			};
 		case 'setOptions':
 			return { ...state, options: action.payload };
 		case 'setCorrectAnswerIndex':
@@ -57,6 +67,12 @@ function reducer(state, action) {
 				questions: state.questions,
 				status: 'ready',
 			};
+		case 'tick':
+			return {
+				...state,
+				secondsRemaining: state.secondsRemaining - 1,
+				status: state.secondsRemaining === 0 ? 'finish' : state.status,
+			};
 		default:
 			throw new Error('Action unknown');
 	}
@@ -72,6 +88,7 @@ export default function App() {
 			answer,
 			correctAnswerIndex,
 			points,
+			secondsRemaining,
 		},
 		dispatch,
 	] = useReducer(reducer, initialState);
@@ -125,6 +142,12 @@ export default function App() {
 							index={index}
 							totalQuestions={totalQuestions}
 						/>
+						<Footer>
+							<Timer
+								dispatch={dispatch}
+								secondsRemaining={secondsRemaining}
+							/>
+						</Footer>
 					</>
 				)}
 				{status === 'finish' && (
